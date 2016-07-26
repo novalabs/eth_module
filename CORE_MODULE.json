@@ -1,0 +1,25 @@
+{
+  "name": "eth",
+  "description": "ETH",
+  "chip": "STM32F407VG",
+  "required_packages": [
+    "common_msgs",
+    "led"
+  ],
+  "chibios_components": [
+    "rt",
+    "hal",
+    "pal",
+    "serial",
+    "mmc_spi",
+    "spi",
+    "serial_usb",
+    "usb",
+    "uart",
+    "mac",
+    "chprintf",
+    "shell",
+    "evtimer",
+    "syscalls"
+  ]
+}
