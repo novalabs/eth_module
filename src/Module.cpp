@@ -24,7 +24,7 @@ static THD_WORKING_AREA(wa_info, 1024);
 static core::mw::RTCANTransport rtcantra(RTCAND1);
 
 RTCANConfig rtcan_config = {
-	1000000, 100, 60
+   1000000, 100, 60
 };
 
 #ifndef CORE_MODULE_NAME
@@ -42,41 +42,45 @@ Module::initialize()
 {
 //	core_ASSERT(core::mw::Middleware::instance.is_stopped()); // TODO: capire perche non va...
 
-	static bool initialized = false;
+   static bool initialized = false;
 
-	if (!initialized) {
-		halInit();
-		chSysInit();
+   if (!initialized) {
+      halInit();
+      chSysInit();
 
-		core::mw::Middleware::instance.initialize(wa_info, sizeof(wa_info), core::os::Thread::LOWEST);
-		rtcantra.initialize(rtcan_config);
-		core::mw::Middleware::instance.start();
+      core::mw::Middleware::instance.initialize(wa_info, sizeof(wa_info), core::os::Thread::LOWEST);
+      rtcantra.initialize(rtcan_config);
+      core::mw::Middleware::instance.start();
 
-		initialized = true;
-	}
+      initialized = true;
+   }
 
-	return initialized;
+   return initialized;
 } // Board::initialize
 
-void Module::enablePHY() {
-	_phy_not_pwrdown.set();
+void
+Module::enablePHY()
+{
+   _phy_not_pwrdown.set();
 }
 
-void Module::disablePHY() {
-	_phy_not_pwrdown.clear();
+void
+Module::disablePHY()
+{
+   _phy_not_pwrdown.clear();
 }
 
 // Leftover from coreBoard (where LED_PAD cannot be defined
 void
 core::mw::CoreModule::Led::toggle()
 {
-	_led.toggle();
+   _led.toggle();
 }
 
 void
 core::mw::CoreModule::Led::write(
-		unsigned on
+   unsigned on
 )
 {
-	_led.write(on);
+   _led.write(on);
 }

@@ -11,18 +11,23 @@
 
 
 class Module:
-	public core::mw::CoreModule
+   public core::mw::CoreModule
 {
 public:
-	static bool
-	initialize();
+   static bool
+   initialize();
+
 
 // --- Ethernet PHY control ---------------------------------------------------
-	static void enablePHY();
-	static void disablePHY();
+   static void
+   enablePHY();
+
+   static void
+   disablePHY();
+
+
 // ----------------------------------------------------------------------------
 
-	Module();
-	virtual ~Module() {}
+   Module();
+   virtual ~Module() {}
 };
-
