@@ -22,7 +22,7 @@ using PHY_PAD = core::hw::Pad_<core::hw::GPIO_C, GPIOC_ETH_PWRDN>;
 static PHY_PAD _phy_not_pwrdown;
 
 static THD_WORKING_AREA(wa_info, 1024);
-static core::mw::RTCANTransport rtcantra(RTCAND1);
+static core::mw::RTCANTransport rtcantra(&RTCAND1);
 
 RTCANConfig rtcan_config = {
    1000000, 100, 60
