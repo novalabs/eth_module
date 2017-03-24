@@ -1,3 +1,9 @@
+/* COPYRIGHT (c) 2016-2017 Nova Labs SRL
+ *
+ * All rights reserved. All use of this software and documentation is
+ * subject to the License Agreement located in the file LICENSE.
+ */
+ 
 /*
     ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
 
@@ -27,6 +33,13 @@
 
 #ifndef _CHCONF_H_
 #define _CHCONF_H_
+
+#ifdef _DEBUG
+#define DEBUG_CHIBI _DEBUG
+#else
+#define DEBUG_CHIBI FALSE
+#endif
+
 
 /*===========================================================================*/
 /**
@@ -333,7 +346,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_SYSTEM_STATE_CHECK           FALSE
+#define CH_DBG_SYSTEM_STATE_CHECK           DEBUG_CHIBI
 
 /**
  * @brief   Debug option, parameters checks.
@@ -342,7 +355,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_CHECKS                FALSE
+#define CH_DBG_ENABLE_CHECKS                DEBUG_CHIBI
 
 /**
  * @brief   Debug option, consistency checks.
@@ -352,7 +365,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_ASSERTS               FALSE
+#define CH_DBG_ENABLE_ASSERTS               DEBUG_CHIBI
 
 /**
  * @brief   Debug option, trace buffer.
@@ -361,7 +374,7 @@
  *
  * @note    The default is @p FALSE.
  */
-#define CH_DBG_ENABLE_TRACE                 FALSE
+#define CH_DBG_ENABLE_TRACE                 DEBUG_CHIBI
 
 /**
  * @brief   Debug option, stack checks.
@@ -373,7 +386,7 @@
  * @note    The default failure mode is to halt the system with the global
  *          @p panic_msg variable set to @p NULL.
  */
-#define CH_DBG_ENABLE_STACK_CHECK           FALSE
+#define CH_DBG_ENABLE_STACK_CHECK           DEBUG_CHIBI
 
 /**
  * @brief   Debug option, stacks initialization.
@@ -394,7 +407,7 @@
  * @note    This debug option is not currently compatible with the
  *          tickless mode.
  */
-#define CH_DBG_THREADS_PROFILING            TRUE
+#define CH_DBG_THREADS_PROFILING            FALSE
 
 /** @} */
 

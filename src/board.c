@@ -76,18 +76,18 @@ void __early_init(void) {
 /**
  * @brief   SDC card detection.
  */
-bool_t sdc_lld_is_card_inserted(SDCDriver *sdcp) {
-  static bool_t last_status = FALSE;
+bool sdc_lld_is_card_inserted(SDCDriver *sdcp) {
+  static bool last_status = false;
 
   if (blkIsTransferring(sdcp))
     return last_status;
-  return last_status = (bool_t)palReadPad(GPIOC, GPIOC_SD_D3);
+  return last_status = !(bool)palReadPad(GPIOA, GPIOA_SD_CD);
 }
 
 /**
  * @brief   SDC card write protection detection.
  */
-bool_t sdc_lld_is_write_protected(SDCDriver *sdcp) {
+bool sdc_lld_is_write_protected(SDCDriver *sdcp) {
 
   (void)sdcp;
   return FALSE;
