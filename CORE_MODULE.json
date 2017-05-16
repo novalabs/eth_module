@@ -1,5 +1,5 @@
 {
-  "name": "eth-poe",
+  "name": "eth",
   "description": "ETH",
   "chip": "STM32F407VG",
   "required_packages": [
