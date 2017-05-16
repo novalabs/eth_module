@@ -1,10 +1,11 @@
 {
-  "name": "eth",
+  "name": "eth-poe",
   "description": "ETH",
   "chip": "STM32F407VG",
   "required_packages": [
     "common_msgs",
-    "led"
+    "led",
+    "snippets"
   ],
   "chibios_components": [
     "rt",
