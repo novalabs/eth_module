@@ -16,26 +16,42 @@ class Pad;
 }
 }
 
+#if CORE_USE_CONFIGURATION_STORAGE
+namespace core {
+namespace mw {
+class CoreConfigurationStorage;
+}
+}
+#endif
+
 class Module:
-   public core::mw::CoreModule
+    public core::mw::CoreModule
 {
 public:
-   static bool
-   initialize();
+// --- DEVICES ----------------------------------------------------------------
+    static core::hw::Pad& sd_led;
 
-   static core::hw::Pad& sd_led;
-
-   static core::os::IOChannel& stream;
-   static core::os::IOChannel& serial;
-
-// --- Ethernet PHY control ---------------------------------------------------
-   static void
-   enablePHY();
-
-   static void
-   disablePHY();
+    static core::os::IOChannel& stream;
+    static core::os::IOChannel& serial;
 // ----------------------------------------------------------------------------
 
-   Module();
-   virtual ~Module() {}
+// --- Ethernet PHY control ---------------------------------------------------
+    static void
+    enablePHY();
+
+    static void
+    disablePHY();
+
+
+// ----------------------------------------------------------------------------
+
+    static bool
+    initialize();
+
+
+#if CORE_USE_CONFIGURATION_STORAGE
+    static core::mw::CoreConfigurationStorage& configurationStorage;
+#endif
+    Module();
+    virtual ~Module() {}
 };

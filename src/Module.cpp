@@ -14,6 +14,7 @@
 #include <core/hw/GPIO.hpp>
 #include <core/hw/SD.hpp>
 #include <core/hw/SDU.hpp>
+#include <core/hw/UID.hpp>
 #include <core/os/Thread.hpp>
 #include <Module.hpp>
 
@@ -41,18 +42,23 @@ core::hw::Pad& Module::sd_led = _sd_led;
 using PHY_PAD = core::hw::Pad_<core::hw::GPIO_C, GPIOC_ETH_PWRDN>;
 static PHY_PAD _phy_not_pwrdown;
 
-static core::mw::RTCANTransport rtcantra(&RTCAND1);
+static core::mw::RTCANTransport      rtcantra(&RTCAND1);
 static core::os::Thread::Stack<2048> management_thread_stack;
 
 RTCANConfig rtcan_config = {
-   1000000, 100, 60
+    1000000, 100, 60
 };
 
-#ifndef CORE_MODULE_NAME
-#define CORE_MODULE_NAME "ETH"
-#endif
+// ----------------------------------------------------------------------------
+// CoreModule STM32FlashConfigurationStorage
+// ----------------------------------------------------------------------------
+#include <core/snippets/CoreModuleSTM32FlashConfigurationStorage.hpp>
+// ----------------------------------------------------------------------------
 
-core::mw::Middleware core::mw::Middleware::instance(CORE_MODULE_NAME, "BOOT_" CORE_MODULE_NAME);
+core::mw::Middleware
+core::mw::Middleware::instance(
+    ModuleConfiguration::MODULE_NAME
+);
 
 
 Module::Module()
@@ -63,92 +69,55 @@ Module::initialize()
 {
 //	core_ASSERT(core::mw::Middleware::instance.is_stopped()); // TODO: capire perche non va...
 
-   static bool initialized = false;
+    static bool initialized = false;
 
-   if (!initialized) {
-      halInit();
-      chSysInit();
+    if (!initialized) {
+        /*
+        * Initializes a serial-over-USB CDC driver.
+        */
+        sduObjectInit(core::hw::SDU_1::driver);
+        sduStart(core::hw::SDU_1::driver, &serusbcfg);
+        sdStart(core::hw::SD_1::driver, nullptr);
 
-      /*
-      * Initializes a serial-over-USB CDC driver.
-      */
-     sduObjectInit(core::hw::SDU_1::driver);
-     sduStart(core::hw::SDU_1::driver, &serusbcfg);
-     sdStart(core::hw::SD_1::driver, nullptr);
+        //sdcStart(&SDCD1, NULL);
 
-     sdcStart(&SDCD1, NULL);
+        //sdStart(core::hw::SD_1::driver, nullptr);
 
-     //sdStart(core::hw::SD_1::driver, nullptr);
-
-     /*
-      * Activates the USB driver and then the USB bus pull-up on D+.
-      * Note, a delay is inserted in order to not have to disconnect the cable
-      * after a reset.
-      */
-     usbDisconnectBus(serusbcfg.usbp);
-     chThdSleepMilliseconds(1500);
-     usbStart(serusbcfg.usbp, &usbcfg);
-     usbConnectBus(serusbcfg.usbp);
+        /*
+         * Activates the USB driver and then the USB bus pull-up on D+.
+         * Note, a delay is inserted in order to not have to disconnect the cable
+         * after a reset.
+         */
+        usbDisconnectBus(serusbcfg.usbp);
+        chThdSleepMilliseconds(1500);
+        usbStart(serusbcfg.usbp, &usbcfg);
+        usbConnectBus(serusbcfg.usbp);
 
 
-      core::mw::Middleware::instance.initialize(management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
-      rtcantra.initialize(rtcan_config);
+        core::mw::Middleware::instance.initialize(moduleName(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
+        rtcantra.initialize(rtcan_config, moduleID());
+        core::mw::Middleware::instance.start();
 
-      core::mw::Middleware::instance.start();
+        initialized = true;
+    }
 
-      initialized = true;
-   }
-
-   return initialized;
+    return initialized;
 } // Board::initialize
 
 void
 Module::enablePHY()
 {
-   _phy_not_pwrdown.set();
+    _phy_not_pwrdown.set();
 }
 
 void
 Module::disablePHY()
 {
-   _phy_not_pwrdown.clear();
+    _phy_not_pwrdown.clear();
 }
 
 // ----------------------------------------------------------------------------
 // CoreModule HW specific implementation
 // ----------------------------------------------------------------------------
-
-void
-core::mw::CoreModule::Led::toggle()
-{
-    _led.toggle();
-}
-
-void
-core::mw::CoreModule::Led::write(
-    unsigned on
-)
-{
-    _led.write(on);
-}
-
-void
-core::mw::CoreModule::reset()
-{
-}
-
-void
-core::mw::CoreModule::keepAlive()
-{
-}
-
-void
-core::mw::CoreModule::disableBootloader()
-{
-}
-
-void
-core::mw::CoreModule::enableBootloader()
-{
-}
-
+#include <core/snippets/CoreModuleHWSpecificImplementation.hpp>
+// ----------------------------------------------------------------------------
