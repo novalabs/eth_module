@@ -15,6 +15,7 @@
 #include <core/hw/SD.hpp>
 #include <core/hw/SDU.hpp>
 #include <core/hw/UID.hpp>
+#include <core/hw/IWDG.hpp>
 #include <core/os/Thread.hpp>
 #include <Module.hpp>
 
@@ -26,10 +27,10 @@ using SD_LED_PAD = core::hw::Pad_<core::hw::GPIO_A, GPIOA_SD_LED>;
 static SD_LED_PAD _sd_led;
 
 using SDU_1_STREAM = core::os::SDChannelTraits<core::hw::SDU_1>;
-using SD_1_STREAM  = core::os::SDChannelTraits<core::hw::SD_1>;
+using SD_3_STREAM  = core::os::SDChannelTraits<core::hw::SD_3>;
 
 using STREAM = core::os::IOChannel_<SDU_1_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
-using SERIAL = core::os::IOChannel_<SD_1_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
+using SERIAL = core::os::IOChannel_<SD_3_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
 
 static STREAM        _stream;
 core::os::IOChannel& Module::stream = _stream;
@@ -67,8 +68,6 @@ Module::Module()
 bool
 Module::initialize()
 {
-//	core_ASSERT(core::mw::Middleware::instance.is_stopped()); // TODO: capire perche non va...
-
     static bool initialized = false;
 
     if (!initialized) {
@@ -77,7 +76,7 @@ Module::initialize()
         */
         sduObjectInit(core::hw::SDU_1::driver);
         sduStart(core::hw::SDU_1::driver, &serusbcfg);
-        sdStart(core::hw::SD_1::driver, nullptr);
+        sdStart(core::hw::SD_3::driver, nullptr);
 
         //sdcStart(&SDCD1, NULL);
 
@@ -93,9 +92,8 @@ Module::initialize()
         usbStart(serusbcfg.usbp, &usbcfg);
         usbConnectBus(serusbcfg.usbp);
 
-
-        core::mw::Middleware::instance.initialize(moduleName(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
-        rtcantra.initialize(rtcan_config, moduleID());
+        core::mw::Middleware::instance.initialize(name(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
+        rtcantra.initialize(rtcan_config, canID());
         core::mw::Middleware::instance.start();
 
         initialized = true;
