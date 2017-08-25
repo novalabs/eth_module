@@ -47,8 +47,8 @@ core::hw::Pad&       Module::sd_led = _sd_led;
 
 
 // SYSTEM STUFF
-static core::os::Thread::Stack<2048> management_thread_stack;
-static core::mw::RTCANTransport      rtcantra(&RTCAND1);
+static core::os::Thread::Stack<2048 + 2048> management_thread_stack;
+static core::mw::RTCANTransport rtcantra(&RTCAND1);
 
 core::mw::Middleware
 core::mw::Middleware::instance(
