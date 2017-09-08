@@ -50,12 +50,6 @@ core::hw::Pad&       Module::sd_led = _sd_led;
 static core::os::Thread::Stack<2048> management_thread_stack;
 static core::mw::RTCANTransport      rtcantra(&RTCAND1);
 
-core::mw::Middleware
-core::mw::Middleware::instance(
-    ModuleConfiguration::MODULE_NAME
-);
-
-
 RTCANConfig rtcan_config = {
     1000000, 100, 60
 };
@@ -69,9 +63,9 @@ Module::initialize()
     static bool initialized = false;
 
     if (!initialized) {
-        core::mw::Middleware::instance.initialize(name(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
+        core::mw::Middleware::instance().initialize(name(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
         rtcantra.initialize(rtcan_config, canID());
-        core::mw::Middleware::instance.start();
+        core::mw::Middleware::instance().start();
 
         sduObjectInit(core::hw::SDU_1::driver);
         sduStart(core::hw::SDU_1::driver, &serusbcfg);
