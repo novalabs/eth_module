@@ -3,9 +3,9 @@
   "description": "ETH",
   "chip": "STM32F407VG",
   "required_packages": [
-    "common_msgs",
-    "led",
-    "snippets"
+    "stm32_flash",
+    "stm32_crc",
+    "snippets"  
   ],
   "chibios_components": [
     "rt",
