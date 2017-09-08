@@ -4,6 +4,8 @@
  * subject to the License Agreement located in the file LICENSE.
  */
 
+#include <core/snippets/CortexMxFaultHandlers.h>
+
 #include <core/mw/Middleware.hpp>
 #include <core/mw/transport/RTCANTransport.hpp>
 
@@ -60,6 +62,12 @@ Module::Module()
 bool
 Module::initialize()
 {
+#ifdef _DEBUG
+    FAULT_HANDLERS_ENABLE(true);
+#else
+    FAULT_HANDLERS_ENABLE(false);
+#endif
+
     static bool initialized = false;
 
     if (!initialized) {
