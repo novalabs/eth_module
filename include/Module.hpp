@@ -8,6 +8,9 @@
 
 #include <core/mw/CoreModule.hpp>
 #include <core/os/IOChannel.hpp>
+#define SDC_POLLING_INTERVAL  1
+#define SDC_POLLING_DELAY     100
+#include <core/hw/SDC.hpp>
 #include <ModuleConfiguration.hpp>
 
 namespace core {
@@ -25,16 +28,8 @@ public:
 
     static core::os::IOChannel& stream;
     static core::os::IOChannel& serial;
-// ----------------------------------------------------------------------------
 
-// --- Ethernet PHY control ---------------------------------------------------
-    static void
-    enablePHY();
-
-    static void
-    disablePHY();
-
-
+    static core::hw::SDC_<core::hw::SDC_1> sdc;
 // ----------------------------------------------------------------------------
 
     static bool

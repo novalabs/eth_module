@@ -106,7 +106,7 @@
 #define GPIOC_PIN0                  0
 #define GPIOC_ETH_RMII_MDC          1
 #define GPIOC_PIN2                  2
-#define GPIOC_ETH_PWRDN             3
+#define GPIOC_PIN3             3
 #define GPIOC_ETH_RMII_RXD0         4
 #define GPIOC_ETH_RMII_RXD1         5
 #define GPIOC_PIN6                  6
@@ -128,8 +128,8 @@
 #define GPIOD_PIN5                  5
 #define GPIOD_PIN6                  6
 #define GPIOD_PIN7                  7
-#define GPIOD_SERIAL_TX                  8
-#define GPIOD_SERIAL_RX                  9
+#define GPIOD_SERIAL_TX             8
+#define GPIOD_SERIAL_RX             9
 #define GPIOD_ETH_RST               10
 #define GPIOD_PIN11                 11
 #define GPIOD_PIN12                 12
@@ -484,7 +484,7 @@
  * PC0  - PIN0                      (input pullup).
  * PC1  - ETH_RMII_MDC              (alternate 11).
  * PC2  - PIN2                      (input pullup).
- * PC3  - ETH_PWRDN                 (output pushpull maximum).
+ * PC3  - PIN3                      (input pullup).
  * PC4  - ETH_RMII_RXD0             (alternate 11).
  * PC5  - ETH_RMII_RXD1             (alternate 11).
  * PC6  - PIN6                      (input pullup).
@@ -501,7 +501,7 @@
 #define VAL_GPIOC_MODER             (PIN_MODE_INPUT(GPIOC_PIN0) |           \
                                      PIN_MODE_ALTERNATE(GPIOC_ETH_RMII_MDC) |\
                                      PIN_MODE_INPUT(GPIOC_PIN2) |           \
-                                     PIN_MODE_OUTPUT(GPIOC_ETH_PWRDN) |     \
+                                     PIN_MODE_INPUT(GPIOC_PIN3) |           \
                                      PIN_MODE_ALTERNATE(GPIOC_ETH_RMII_RXD0) |\
                                      PIN_MODE_ALTERNATE(GPIOC_ETH_RMII_RXD1) |\
                                      PIN_MODE_INPUT(GPIOC_PIN6) |           \
@@ -517,7 +517,7 @@
 #define VAL_GPIOC_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOC_PIN0) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOC_ETH_RMII_MDC) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_PIN2) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOC_ETH_PWRDN) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOC_PIN3) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOC_ETH_RMII_RXD0) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_ETH_RMII_RXD1) |\
                                      PIN_OTYPE_PUSHPULL(GPIOC_PIN6) |       \
@@ -533,7 +533,7 @@
 #define VAL_GPIOC_OSPEEDR           (PIN_OSPEED_100M(GPIOC_PIN0) |          \
                                      PIN_OSPEED_100M(GPIOC_ETH_RMII_MDC) |  \
                                      PIN_OSPEED_100M(GPIOC_PIN2) |          \
-                                     PIN_OSPEED_100M(GPIOC_ETH_PWRDN) |     \
+                                     PIN_OSPEED_100M(GPIOC_PIN3) |     \
                                      PIN_OSPEED_100M(GPIOC_ETH_RMII_RXD0) | \
                                      PIN_OSPEED_100M(GPIOC_ETH_RMII_RXD1) | \
                                      PIN_OSPEED_100M(GPIOC_PIN6) |          \
@@ -549,7 +549,7 @@
 #define VAL_GPIOC_PUPDR             (PIN_PUPDR_PULLUP(GPIOC_PIN0) |         \
                                      PIN_PUPDR_FLOATING(GPIOC_ETH_RMII_MDC) |\
                                      PIN_PUPDR_PULLUP(GPIOC_PIN2) |         \
-                                     PIN_PUPDR_FLOATING(GPIOC_ETH_PWRDN) |  \
+                                     PIN_PUPDR_PULLUP(GPIOC_PIN3) |         \
                                      PIN_PUPDR_FLOATING(GPIOC_ETH_RMII_RXD0) |\
                                      PIN_PUPDR_FLOATING(GPIOC_ETH_RMII_RXD1) |\
                                      PIN_PUPDR_PULLUP(GPIOC_PIN6) |         \
@@ -565,7 +565,7 @@
 #define VAL_GPIOC_ODR               (PIN_ODR_HIGH(GPIOC_PIN0) |             \
                                      PIN_ODR_HIGH(GPIOC_ETH_RMII_MDC) |     \
                                      PIN_ODR_HIGH(GPIOC_PIN2) |             \
-                                     PIN_ODR_HIGH(GPIOC_ETH_PWRDN) |        \
+                                     PIN_ODR_HIGH(GPIOC_PIN3) |             \
                                      PIN_ODR_HIGH(GPIOC_ETH_RMII_RXD0) |    \
                                      PIN_ODR_HIGH(GPIOC_ETH_RMII_RXD1) |    \
                                      PIN_ODR_HIGH(GPIOC_PIN6) |             \
@@ -581,7 +581,7 @@
 #define VAL_GPIOC_AFRL              (PIN_AFIO_AF(GPIOC_PIN0, 0) |           \
                                      PIN_AFIO_AF(GPIOC_ETH_RMII_MDC, 11) |  \
                                      PIN_AFIO_AF(GPIOC_PIN2, 0) |           \
-                                     PIN_AFIO_AF(GPIOC_ETH_PWRDN, 0) |      \
+                                     PIN_AFIO_AF(GPIOC_PIN3, 0) |           \
                                      PIN_AFIO_AF(GPIOC_ETH_RMII_RXD0, 11) | \
                                      PIN_AFIO_AF(GPIOC_ETH_RMII_RXD1, 11) | \
                                      PIN_AFIO_AF(GPIOC_PIN6, 0) |           \
@@ -673,7 +673,7 @@
                                      PIN_PUPDR_PULLUP(GPIOD_PIN7) |         \
                                      PIN_PUPDR_FLOATING(GPIOD_SERIAL_TX) |  \
                                      PIN_PUPDR_FLOATING(GPIOD_SERIAL_RX) |  \
-                                     PIN_PUPDR_FLOATING(GPIOD_ETH_RST) |    \
+                                     PIN_PUPDR_PULLUP(GPIOD_ETH_RST) |      \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN11) |        \
                                      PIN_PUPDR_PULLUP(GPIOD_PIN12) |        \
                                      PIN_PUPDR_FLOATING(GPIOD_ETH_PHYAD0) | \

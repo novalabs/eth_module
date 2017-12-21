@@ -11,7 +11,6 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "usbcfg.h"
 
 #include <core/hw/GPIO.hpp>
 #include <core/hw/SD.hpp>
@@ -30,23 +29,26 @@ static LED_PAD _led;
 using SD_LED_PAD = core::hw::Pad_<core::hw::GPIO_A, GPIOA_SD_LED>;
 static SD_LED_PAD _sd_led;
 
-// PHY !POWERDOWN
-using PHY_PAD = core::hw::Pad_<core::hw::GPIO_C, GPIOC_ETH_PWRDN>;
-static PHY_PAD _phy_not_pwrdown;
+// PHY !RESET
+using PHY_RESET_PAD = core::hw::Pad_<core::hw::GPIO_D, GPIOD_ETH_RST>;
+static PHY_RESET_PAD _phy_reset;
 
-// SERIALS
+// USB SERIAL
 using SDU_1_STREAM = core::os::SDChannelTraits<core::hw::SDU_1>;
-using SD_3_STREAM  = core::os::SDChannelTraits<core::hw::SD_3>;
+using USBSERIAL    = core::os::IOChannel_<SDU_1_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
+static USBSERIAL _stream;
+
+// SERIAL
+using SD_3_STREAM = core::os::SDChannelTraits<core::hw::SD_3>;
 using STREAM       = core::os::IOChannel_<SDU_1_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
-using SERIAL       = core::os::IOChannel_<SD_3_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
-static STREAM _stream;
+using SERIAL      = core::os::IOChannel_<SD_3_STREAM, core::os::IOChannel::DefaultTimeout::INFINITE>;
 static SERIAL _serial;
 
 // MODULE DEVICES
+core::hw::SDU _sdu;
 core::os::IOChannel& Module::stream = _stream;
 core::os::IOChannel& Module::serial = _serial;
 core::hw::Pad&       Module::sd_led = _sd_led;
-
 
 // SYSTEM STUFF
 static core::os::Thread::Stack<2048> management_thread_stack;
@@ -58,6 +60,23 @@ RTCANConfig rtcan_config = {
 
 Module::Module()
 {}
+
+void
+usb_disconnect_bus()
+{
+    palClearPort(GPIOA, (1 << GPIOA_OTG_FS_DM) | (1 << GPIOA_OTG_FS_DP));
+    palSetPadMode(GPIOA, GPIOA_OTG_FS_DM, PAL_MODE_OUTPUT_PUSHPULL);
+    palSetPadMode(GPIOA, GPIOA_OTG_FS_DP, PAL_MODE_OUTPUT_PUSHPULL);
+}
+
+void
+usb_connect_bus()
+{
+    palClearPort(GPIOA, (1 << GPIOA_OTG_FS_DM) | (1 << GPIOA_OTG_FS_DP));
+    palSetPadMode(GPIOA, GPIOA_OTG_FS_DM, PAL_MODE_ALTERNATE(10));
+    palSetPadMode(GPIOA, GPIOA_OTG_FS_DP, PAL_MODE_ALTERNATE(10));
+}
+
 
 bool
 Module::initialize()
@@ -71,36 +90,34 @@ Module::initialize()
     static bool initialized = false;
 
     if (!initialized) {
+        core::mw::CoreModule::initialize();
+
+        _led.setMode(core::hw::Pad::Mode::OUTPUT_PUSHPULL);
+        _sd_led.setMode(core::hw::Pad::Mode::OUTPUT_PUSHPULL);
+
+        _led.set();
+        _sd_led.clear();
+
         core::mw::Middleware::instance().initialize(name(), management_thread_stack, management_thread_stack.size(), core::os::Thread::LOWEST);
         rtcantra.initialize(rtcan_config, canID());
         core::mw::Middleware::instance().start();
 
-        sduObjectInit(core::hw::SDU_1::driver);
-        sduStart(core::hw::SDU_1::driver, &serusbcfg);
-        sdStart(core::hw::SD_3::driver, nullptr);
+        _sdu.setDescriptors(core::hw::SDUDefaultDescriptors::static_callback());
+        _sdu.init();
+        _sdu.start();
 
-        usbDisconnectBus(serusbcfg.usbp);
+        usbDisconnectBus(&USBD1);
+        usb_disconnect_bus();
         chThdSleepMilliseconds(1500);
-        usbStart(serusbcfg.usbp, &usbcfg);
-        usbConnectBus(serusbcfg.usbp);
+        usbStart(&USBD1, _sdu.usbcfg());
+        usb_connect_bus();
+        usbConnectBus(&USBD1);
 
         initialized = true;
     }
 
     return initialized;
 } // Board::initialize
-
-void
-Module::enablePHY()
-{
-    _phy_not_pwrdown.set();
-}
-
-void
-Module::disablePHY()
-{
-    _phy_not_pwrdown.clear();
-}
 
 // ----------------------------------------------------------------------------
 // CoreModule STM32FlashConfigurationStorage

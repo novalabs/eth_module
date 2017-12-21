@@ -1,7 +1,7 @@
 {
   "name": "eth",
   "description": "ETH",
-  "chip": "STM32F407VG",
+  "chip": "STM32F407VE",
   "required_packages": [
     "stm32_flash",
     "stm32_crc",
