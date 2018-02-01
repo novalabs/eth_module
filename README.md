@@ -1,1 +1,2 @@
-# eth-module
+# Nova Core ETH module
+Ethernet module
