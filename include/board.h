@@ -70,7 +70,7 @@
 #define SD_LED_GPIO                 GPIOA
 #define SERIAL_DRIVER				SD1
 
-#define LED							GPIOE_LED
+// #define LED							GPIOE_LED
 
 /*
  * IO pins assignments.
