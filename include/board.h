@@ -39,6 +39,8 @@
 #define BOARD_PHY_ID                MII_LAN8710A_ID
 #define BOARD_PHY_RMII
 
+#define BOARD_PHY_RESET()           palClearPad(GPIOD, GPIOD_ETH_RST); osalSysPolledDelayX(US2ST(100)); palSetPad(GPIOD, GPIOD_ETH_RST);  osalSysPolledDelayX(US2ST(100));
+
 /*
  * Board oscillators-related settings.
  */
@@ -112,7 +114,7 @@
 #define GPIOC_PIN0                  0
 #define GPIOC_ETH_RMII_MDC          1
 #define GPIOC_PIN2                  2
-#define GPIOC_PIN3             3
+#define GPIOC_PIN3                  3
 #define GPIOC_ETH_RMII_RXD0         4
 #define GPIOC_ETH_RMII_RXD1         5
 #define GPIOC_PIN6                  6
